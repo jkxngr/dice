@@ -196,10 +196,31 @@ class DiceGame {
   }
 }
 const args = process.argv.slice(2);
-if (args.length === 0) {
-  console.error("Please provide dice configurations as arguments.");
+
+if (args.length < 3) {
+  console.error(
+    "You must provide at least 3 dice configurations to play the game."
+  );
   process.exit(1);
 }
-const diceOptions = args.map((arg) => arg.split(",").map(Number));
+const diceOptions = args.map((arg, index) => {
+  const dice = arg.split(",").map(Number);
+  if (dice.some(isNaN)) {
+    console.error(
+      `Dice ${
+        index + 1
+      } contains a non-integer value. Ensure all dice values are integers.`
+    );
+    process.exit(1);
+  }
+  if (dice.length < 1) {
+    console.error(
+      `Dice ${index + 1} has no sides. Each dice must have at least one value.`
+    );
+    process.exit(1);
+  }
+  return dice;
+});
+
 const game = new DiceGame(diceOptions);
 game.start();
